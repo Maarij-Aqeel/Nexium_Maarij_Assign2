@@ -1,103 +1,110 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [activeTab, setActiveTab] = useState("url");
+  const [urlInput, setUrlInput] = useState("");
+  const [textInput, setTextInput] = useState("");
+  const images=["/images/lightning.png","/images/flexible.png","/images/translation.png"]
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+  const isInputFilled =
+    (activeTab === "url" && urlInput.trim().length > 0) ||
+    (activeTab === "text" && textInput.trim().length > 0);
+
+  return (
+    <div className="min-h-screen bg-cyan-100 flex flex-col items-center justify-center p-5">
+      
+      <h1 className="text-5xl text-black p-4 mb-2 font-semibold">
+        Blog Summarizer
+      </h1>
+      <p className="text-lg text-center text-gray-700 min-w-50 max-w-150 mb-6"> 
+        Transform lengthy blog posts into concise, digestible summaries. Paste a URL or raw text to get key insights in seconds, with optional Urdu translation.
+      </p>
+
+      <div className="bg-cyan-300   rounded-4xl shadow-lg p-6 w-full max-w-2xl">
+        <h1 className="text-gray-900 text-2xl font-bold mb-6 text-center">
+          Choose your Input method
+        </h1>
+        <p className="text-center text-gray-700">
+          Summarize content by pasting a URL or entering raw text directly
+        </p>
+
+        {/* Tabs */}
+        <div role="tablist" className="tabs  tabs-bordered w-full mb-4 justify-center">
+          <button
+            role="tab"
+            className={`tab ${activeTab === "url" ? "tab-active text-gray-900 " : "!text-gray-400 hover:!text-gray-600"}`}
+            onClick={() => setActiveTab("url")}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Blog URL
+          </button>
+          <button
+            role="tab"
+            className={` tab ${activeTab === "text" ? "tab-active text-gray-900" :"!text-gray-400 hover:!text-gray-600"}`}
+            onClick={() => setActiveTab("text")}
           >
-            Read our docs
-          </a>
+            Raw Text
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        {/* Tab Content */}
+        {activeTab === "url" && (
+          <input
+            type="text"
+            placeholder="https://example.com/blog-post"
+            className="input rounded-xl bg-white text-black input-bordered w-full mb-4"
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+        )}
+
+        {activeTab === "text" && (
+          <textarea
+            placeholder="Paste blog content here..."
+            className="textarea textarea-neutral w-full mb-4 text-black bg-cyan-50"
+            rows={5}
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        )}
+
+        <div className="justify-center flex">
+          <button
+              className={`w-2/3 px-4  py-2 rounded-xl text-lg font-medium transition-colors duration-200 ${
+                isInputFilled
+                  ? "bg-sky-600 hover:bg-indigo-700 text-white"
+                  : "bg-gray-900 text-white opacity-40 cursor-not-allowed"
+              }`}
+              disabled={!isInputFilled}
+            >
+              Summarize
+            </button>
+      </div>
+      </div>
+
+{/* Cards Section */}
+      <div className="flex flex-wrap justify-center gap-6 mt-8 p-4 mb-4">
+          {["Lightning Fast", "AI Powered", "Multilingual Support"].map((title, i) => (
+            <div
+              key={i}
+              className="card bg-cyan-150 text-gray-800 rounded-2xl shadow-lg transform hover:scale-105 hover:shadow-2xl transition-all duration-300 w-80 p-6 text-center"
+            >
+              <figure>
+                <img src={images[i]} alt="light" className="w-16 h-16 mx-auto mb-4" />
+              </figure>
+
+              <h2 className="text-2xl font-semibold mb-3">{title}</h2>
+              <p className="text-lg">
+                {i === 0
+                  ? "Get summaries in seconds with our advanced processing."
+                  : i === 1
+                  ? "Powered by cutting-edge AI models for accurate results."
+                  : "Translate summaries into Urdu and other languages instantly."}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
   );
 }

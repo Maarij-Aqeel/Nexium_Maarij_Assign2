@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Navigation from "./components/navigation";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,9 +26,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+{/* Header */}
+        <header className="p-3  bg-indigo-100 sticky top-0 z-50 shadow-md overflow-x-clip">
+          <div className="flex p-2 justify-between items-center">
+            <h1 className="text-3xl hover:cursor-pointer px-8 text-left font-semibold text-gray-900">
+              Blog Summarizer
+            </h1>
+            <div className="px-5 mr-10">
+              <Navigation/>
+            </div>
+          </div>
+        </header>
+
+{/* Main Page Content */}
+       <main className="flex-grow pt-[90px] px-4">
+            {children}
+        </main>
+
+{/* Footer */}
+        <footer className="bg-indigo-100 text-gray-900">
+          All Rights Reserved 2025
+        </footer>
       </body>
     </html>
   );

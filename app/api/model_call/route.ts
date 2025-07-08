@@ -13,10 +13,10 @@ export async function POST(req:Request)
 
         // Prompt for model
         const body = await req.json();
-        const model = genai.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genai.getGenerativeModel({ model: "gemini-2.5-flash" });
     
         // Getting the Result
-        const result = await model.generateContent(body.Raw_data || "Who are you");
+        const result = await model.generateContent(body.scraped_text || "Who are you");
         const response =  result.response;
         const text =  response.text();
     

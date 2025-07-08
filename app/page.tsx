@@ -1,17 +1,55 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("url");
   const [urlInput, setUrlInput] = useState("");
   const [textInput, setTextInput] = useState("");
   const [summarized_click, setSummarized] = useState("");
+  const [scraped_text, setScrapedText] = useState("");
+  const [summarized_text, setSummarizedText] = useState("");
+
+  const router=useRouter()
 
   const images = [
     "/images/lightning.png",
     "/images/flexible.png",
     "/images/translation.png",
   ];
+
+  // Scraping text call
+    const scrape_url = async (): Promise<string> => {
+    const resp = await fetch("/api/scrape", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: urlInput }),
+    });
+
+    const data = await resp.json();
+    setScrapedText(data.text_content);
+
+    const summary = await summarize_text(data.text_content);
+    return summary;
+  };
+
+  // Summarizing text call
+    const summarize_text = async (text: string): Promise<string> => {
+      const resp = await fetch("/api/model_call", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ scraped_text: text }),
+      });
+
+      const data = await resp.json();
+      setSummarizedText(data.output);
+      return data.output;
+    };
+
 
   const isInputFilled =
     (activeTab === "url" && urlInput.trim().length > 0) ||
@@ -24,8 +62,8 @@ export default function Home() {
         Blog Summarizer
       </h1>
       <p className="text-lg text-gray-700 text-center max-w-2xl mb-8">
-        Transform lengthy blog posts into concise, digestible summaries. Paste
-        a URL or raw text to get key insights in seconds — with optional Urdu
+        Transform lengthy blog posts into concise, digestible summaries. Paste a
+        URL or raw text to get key insights in seconds — with optional Urdu
         translation.
       </p>
 
@@ -46,7 +84,10 @@ export default function Home() {
                 ? "bg-sky-600 text-white shadow-md"
                 : "bg-sky-100 text-sky-700 hover:bg-sky-200"
             }`}
-            onClick={() => setActiveTab("url")}
+            onClick={() => {
+              setActiveTab("url");
+              setSummarized("");
+            }}
           >
             Blog URL
           </button>
@@ -56,7 +97,10 @@ export default function Home() {
                 ? "bg-sky-600 text-white shadow-md"
                 : "bg-sky-100 text-sky-700 hover:bg-sky-200"
             }`}
-            onClick={() => setActiveTab("text")}
+            onClick={() => {
+              setActiveTab("text");
+              setSummarized("");
+            }}
           >
             Raw Text
           </button>
@@ -91,12 +135,27 @@ export default function Home() {
                 : "bg-gray-400 text-white opacity-60 cursor-not-allowed"
             }`}
             disabled={!isInputFilled}
-            onClick={() => setSummarized("True")}
+           onClick={async () => {
+          setSummarized("True");
+
+          let finalText = "";
+
+          if (activeTab === "url") {
+            const scraped = await scrape_url(); // return summarized_text from here
+            finalText = scraped;
+          } else {
+            finalText = await summarize_text(textInput);
+          }
+          localStorage.setItem("summarized", finalText);
+          router.push(`/summarize?s=${encodeURIComponent(urlInput)}&source=${activeTab}`);
+
+        }}
+
           >
             {summarized_click && (
               <span className="loading loading-dots mr-2"></span>
             )}
-            Summarize
+            {summarized_click ? "Summarizing" : "Summarize"}
           </button>
         </div>
       </div>

@@ -1,10 +1,14 @@
+import ReactMarkdown from "react-markdown";
 
+type Props = {
+  summarize_text: string;
+};
 
-export default function SummarizeBox() {
+export default function SummarizeBox({ summarize_text }: Props) {
   return (
     <div className="w-full flex flex-col items-center mt-10">
       <div className="w-2/3 bg-white rounded-2xl shadow-2xl p-6 space-y-4">
-        {/* Header + Copy Button */}
+        {/* Header */}
         <div className="flex justify-between items-center">
           <h1 className="text-2xl text-sky-800 font-bold">Summary</h1>
 
@@ -25,22 +29,21 @@ export default function SummarizeBox() {
 
         {/* Main Summary Content */}
         <div className="bg-sky-50 border border-sky-100 p-4 rounded-xl shadow-inner max-h-[300px] overflow-y-auto">
-          <p className="text-gray-800 text-base break-words whitespace-pre-wrap leading-relaxed">
-            ddddddddddddddddddddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddddddddddddddddddddddddddddddddddd
-          </p>
+          <div className="text-gray-800 text-base break-words whitespace-pre-wrap leading-relaxed">
+            <ReactMarkdown>{summarize_text}</ReactMarkdown>
+          </div>
         </div>
 
         {/* Translate Button */}
         <div>
-         <button className="bg-sky-600 text-white hover:bg-sky-700 font-semibold px-5 py-3 rounded-full transition-all duration-200 shadow-md flex items-center gap-3">
+          <button className="bg-sky-600 text-white hover:bg-sky-700 font-semibold px-5 py-3 rounded-full transition-all duration-200 shadow-md flex items-center gap-3">
             <img
-                src="https://img.icons8.com/?size=100&id=QyZvJTP0BAHx&format=png&color=000000"
-                className="h-9 w-9"
-                alt="translate icon"
+              src="https://img.icons8.com/?size=100&id=QyZvJTP0BAHx&format=png&color=000000"
+              className="h-9 w-9"
+              alt="translate icon"
             />
             Translate to Urdu
-        </button>
-
+          </button>
         </div>
       </div>
     </div>

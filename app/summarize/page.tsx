@@ -1,0 +1,49 @@
+import SummarizeBox from "@/components/SummarizeBox";
+import Link from "next/link";
+
+export default function Summarize() {
+
+    
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-cyan-100 to-white flex flex-col items-center">
+      {/* Top Buttons */}
+      <div className="w-full flex flex-row px-10 py-6 justify-between items-center">
+        <Link href='/' className="text-sky-700 text-center border border-sky-700 flex items-center  rounded-full hover:bg-sky-100 w-40 text-lg font-bold p-3 justify-center transition-all duration-200 shadow-md gap-2">
+         <img 
+              src="https://img.icons8.com/?size=100&id=39776&format=png&color=000000"
+              className="h-5 w-5"
+              alt="copy icon"
+            />
+        Back
+        </Link>
+        <button className="text-white bg-sky-600 hover:bg-sky-700 font-semibold rounded-full w-48 text-lg p-3 transition-all duration-200 shadow-md">
+          + New Summary
+        </button>
+      </div>
+
+      {/* Source Input */}
+      <div className="flex items-center justify-center w-full mt-6">
+        <div className="p-6 bg-white rounded-2xl shadow-2xl flex flex-col w-2/3 gap-4">
+          <div className="flex items-center gap-4 text-sky-700 text-xl font-semibold px-2">
+            <img
+              src="https://img.icons8.com/?size=100&id=0GU4b5gZ4PdA&format=png&color=000000"
+              alt="icon"
+              className="h-7 w-7"
+            />
+            <span>Source Input</span>
+          </div>
+
+          <input
+            className="bg-sky-50 text-gray-700 text-lg p-4 rounded-lg outline-none border border-sky-200 shadow-inner"
+            disabled={true}
+            placeholder="https://example.com"
+          />
+        </div>
+      </div>
+
+      {/* Summarized Box */}
+      <SummarizeBox />
+    </div>
+  );
+}

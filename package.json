@@ -12,6 +12,7 @@
     "@google/generative-ai": "^0.24.1",
     "@vitalets/google-translate-api": "^9.2.1",
     "dotenv": "^17.0.1",
+    "framer-motion": "^12.23.3",
     "next": "15.3.5",
     "playwright": "^1.53.2",
     "react": "^19.0.0",

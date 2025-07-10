@@ -4,6 +4,7 @@ import SummarizeBox from "@/components/SummarizeBox";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 
 export default function Summarize() {
   const searchParams = useSearchParams();
@@ -18,7 +19,12 @@ export default function Summarize() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cyan-100 to-white flex flex-col items-center">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="min-h-screen bg-gradient-to-b from-cyan-100 to-white flex flex-col items-center"
+    >
       {/* Top Buttons */}
       <div className="w-full flex flex-row px-10 py-6 justify-between items-center">
         <Link
@@ -64,6 +70,6 @@ export default function Summarize() {
 
       {/* Summarized Box */}
       <SummarizeBox summarize_text={summary} />
-    </div>
+    </motion.div>
   );
 }

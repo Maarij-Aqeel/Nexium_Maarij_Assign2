@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import { useState, useEffect } from "react";
+import { GradualSpacing } from "./GradualSpacing";
 import { Message } from "../components/Message";
 
 type Props = {
@@ -61,9 +62,9 @@ export default function SummarizeBox({ summarize_text }: Props) {
         </div>
 
         {/* Title  */}
-        <p className="text-lg text-gray-600">
-          <span className="font-semibold text-sky-800">Title:</span> {title}
-        </p>
+        <div className="text-lg text-gray-600 flex">
+          <GradualSpacing className="font-semibold text-sky-800" text={`Title: ${title}`}/>
+        </div>
 
         {/* Main Summary Content */}
         <div className="bg-sky-50 border border-sky-100 p-4 rounded-xl shadow-inner max-h-[300px] overflow-y-auto">

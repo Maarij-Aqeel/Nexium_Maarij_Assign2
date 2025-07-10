@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { GradualSpacing } from "@/components/GradualSpacing";
+import { TextFade } from "@/components/FadeUp";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("url");
@@ -64,25 +67,31 @@ export default function Home() {
     (activeTab === "text" && textInput.trim().length > 50);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cyan-100 to-white flex flex-col items-center px-6 py-12">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="min-h-screen bg-gradient-to-b from-cyan-100 to-white flex flex-col items-center px-6 py-12"
+    >
       {/* Header */}
       <h1 className="text-5xl font-bold text-sky-800 mb-2 text-center">
         Blog Summarizer
       </h1>
-      <p className="text-lg text-gray-700 text-center max-w-2xl mb-8">
-        Transform lengthy blog posts into concise, digestible summaries. Paste a
+      <GradualSpacing
+        text="Transform lengthy blog posts into concise, digestible summaries. Paste a
         URL or raw text to get key insights in seconds — with optional Urdu
-        translation.
-      </p>
+        translation."
+        className="text-lg text-gray-700 text-center max-w-2xl mb-8"
+      />
 
       {/* Input Box */}
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8">
         <h2 className="text-2xl text-sky-800 font-semibold text-center mb-2">
           Choose Your Input Method
         </h2>
-        <p className="text-gray-600 text-center mb-6">
-          Summarize content by pasting a URL or entering raw text directly
-        </p>
+        <GradualSpacing className="text-gray-600 text-center mb-6"
+          text="Summarize content by pasting a URL or entering raw text directly"
+          />
 
         {/* Tabs */}
         <div className="flex justify-center mb-6 gap-4">
@@ -179,7 +188,7 @@ export default function Home() {
       </div>
 
       {/* Feature Cards */}
-      <div className="flex flex-wrap justify-center gap-6 mt-12 px-4 w-full max-w-6xl">
+      <TextFade direction="up" className="flex flex-wrap justify-center gap-6 mt-12 px-4 w-full max-w-6xl">
         {["Lightning Fast", "AI Powered", "Multilingual Support"].map(
           (title, i) => (
             <div
@@ -205,7 +214,7 @@ export default function Home() {
             </div>
           )
         )}
-      </div>
-    </div>
+      </TextFade>
+    </motion.div>
   );
 }

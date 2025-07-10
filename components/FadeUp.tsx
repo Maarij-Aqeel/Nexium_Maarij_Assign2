@@ -22,7 +22,7 @@ export function TextFade({
     show: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', duration: 0.6 },
+      transition: { type: 'spring' as const, duration: 0.6 },
     },
   };
 

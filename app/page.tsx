@@ -6,7 +6,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("url");
   const [urlInput, setUrlInput] = useState("");
   const [textInput, setTextInput] = useState("");
-  const [summarized_click, setSummarized] = useState("");
+  const [summarized_click, setSummarized] = useState(false);
 
   const router = useRouter();
 
@@ -94,7 +94,7 @@ export default function Home() {
             }`}
             onClick={() => {
               setActiveTab("url");
-              setSummarized("");
+              setSummarized(false);
             }}
           >
             Blog URL
@@ -107,7 +107,7 @@ export default function Home() {
             }`}
             onClick={() => {
               setActiveTab("text");
-              setSummarized("");
+              setSummarized(false);
             }}
           >
             Raw Text
@@ -144,7 +144,8 @@ export default function Home() {
             }`}
             disabled={!isInputFilled}
             onClick={async () => {
-              setSummarized("True");
+              if (summarized_click) return;
+              setSummarized(true);
 
               let finalText = "";
               let title = "";

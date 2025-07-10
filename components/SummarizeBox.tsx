@@ -9,12 +9,22 @@ type Props = {
 export default function SummarizeBox({ summarize_text }: Props) {
   const [title, setTitle] = useState("");
   const [showToast, SetShowToast] = useState(false);
+  const [translatedText, SetTranslatedText] = useState("");
+  const [showTranslated, SetshowTranslated] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  // Translate summarized text
+  const translate_text = async (text: string): Promise<string> => {
+    const res = await fetch(`/api/translate?q=${encodeURIComponent(text)}`);
+    const data = await res.json();
+    return data.translated;
+  };
 
   useEffect(() => {
     setTitle(localStorage.getItem("title") || "");
   }, []);
 
-  // Auto close after 2s
+  // Auto close toast after 2s
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => SetShowToast(false), 2000);
@@ -35,8 +45,10 @@ export default function SummarizeBox({ summarize_text }: Props) {
           <button
             className="text-lg px-4 py-2 cursor-pointer font-semibold flex items-center gap-2 bg-sky-100 text-sky-700 hover:bg-sky-200 rounded-full shadow-sm transition-all duration-200"
             onClick={() => {
-              navigator.clipboard.writeText(summarize_text);
-              SetShowToast(true)
+              navigator.clipboard.writeText(
+                showTranslated ? translatedText : summarize_text
+              );
+              SetShowToast(true);
             }}
           >
             <img
@@ -56,19 +68,65 @@ export default function SummarizeBox({ summarize_text }: Props) {
         {/* Main Summary Content */}
         <div className="bg-sky-50 border border-sky-100 p-4 rounded-xl shadow-inner max-h-[300px] overflow-y-auto">
           <div className="text-gray-800 text-base break-words whitespace-pre-wrap leading-relaxed">
-            <ReactMarkdown>{summarize_text}</ReactMarkdown>
+            {!showTranslated ? (
+              <ReactMarkdown>{summarize_text}</ReactMarkdown>
+            ) : (
+              <ReactMarkdown>{translatedText}</ReactMarkdown>
+            )}
           </div>
         </div>
 
         {/* Translate Button */}
         <div>
-          <button className="bg-sky-600 text-white hover:bg-sky-700 font-semibold px-5 py-3 rounded-full transition-all duration-200 shadow-md flex items-center gap-3">
-            <img
-              src="https://img.icons8.com/?size=100&id=QyZvJTP0BAHx&format=png&color=000000"
-              className="h-9 w-9"
-              alt="translate icon"
-            />
-            Translate to Urdu
+          <button
+            className={`bg-sky-600 text-white font-semibold px-5 py-3 rounded-full transition-all duration-200 shadow-md flex items-center gap-3 ${
+              isTranslating
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-sky-700"
+            }`}
+            onClick={async () => {
+              // 1. Prevent re-click
+              if (isTranslating) return;
+
+              // 2. If already showing translation, go back to original
+              if (showTranslated) {
+                SetshowTranslated(false);
+                return;
+              }
+
+              // 3. If translation already exists, just show it
+              if (translatedText.length !== 0) {
+                SetshowTranslated(true);
+                return;
+              }
+
+              // 4. Translate if not done yet
+              setIsTranslating(true);
+              try {
+                const translated = await translate_text(summarize_text);
+                SetTranslatedText(translated);
+                SetshowTranslated(true);
+              } catch (err) {
+                console.error("Translation error", err);
+              }
+              setIsTranslating(false);
+            }}
+            disabled={isTranslating}
+          >
+            {isTranslating ? (
+              <span className="loading loading-dots loading-sm text-white mr-2"></span>
+            ) : (
+              <img
+                src="https://img.icons8.com/?size=100&id=QyZvJTP0BAHx&format=png&color=000000"
+                className="h-9 w-9"
+                alt="translate icon"
+              />
+            )}
+            {isTranslating
+              ? "Translating"
+              : showTranslated
+              ? "Show Original"
+              : "Translate to Urdu"}
           </button>
         </div>
       </div>

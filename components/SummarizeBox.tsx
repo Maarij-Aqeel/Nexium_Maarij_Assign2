@@ -1,18 +1,44 @@
 import ReactMarkdown from "react-markdown";
+import { useState, useEffect } from "react";
+import { Message } from "../components/Message";
 
 type Props = {
   summarize_text: string;
 };
 
 export default function SummarizeBox({ summarize_text }: Props) {
+  const [title, setTitle] = useState("");
+  const [showToast, SetShowToast] = useState(false);
+
+  useEffect(() => {
+    setTitle(localStorage.getItem("title") || "");
+  }, []);
+
+  // Auto close after 2s
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => SetShowToast(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
+
   return (
     <div className="w-full flex flex-col items-center mt-10">
       <div className="w-2/3 bg-white rounded-2xl shadow-2xl p-6 space-y-4">
+        {/* Toast Message */}
+        {showToast && <Message alert_msg="Copied to clipboard!" />}
+
         {/* Header */}
         <div className="flex justify-between items-center">
           <h1 className="text-2xl text-sky-800 font-bold">Summary</h1>
 
-          <button className="text-lg px-4 py-2 cursor-pointer font-semibold flex items-center gap-2 bg-sky-100 text-sky-700 hover:bg-sky-200 rounded-full shadow-sm transition-all duration-200">
+          <button
+            className="text-lg px-4 py-2 cursor-pointer font-semibold flex items-center gap-2 bg-sky-100 text-sky-700 hover:bg-sky-200 rounded-full shadow-sm transition-all duration-200"
+            onClick={() => {
+              navigator.clipboard.writeText(summarize_text);
+              SetShowToast(true)
+            }}
+          >
             <img
               src="https://img.icons8.com/?size=100&id=cvB6JC7HJn9v&format=png&color=000000"
               className="h-5 w-5"
@@ -22,9 +48,9 @@ export default function SummarizeBox({ summarize_text }: Props) {
           </button>
         </div>
 
-        {/* Small Info */}
-        <p className="text-md text-gray-600">
-          AI-generated summary from blog URL
+        {/* Title  */}
+        <p className="text-lg text-gray-600">
+          <span className="font-semibold text-sky-800">Title:</span> {title}
         </p>
 
         {/* Main Summary Content */}

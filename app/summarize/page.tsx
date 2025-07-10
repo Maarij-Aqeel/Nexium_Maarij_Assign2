@@ -28,7 +28,7 @@ export default function Summarize() {
           <img
             src="https://img.icons8.com/?size=100&id=39776&format=png&color=000000"
             className="h-5 w-5"
-            alt="copy icon"
+            alt="Back icon"
           />
           Back
         </Link>
@@ -40,9 +40,7 @@ export default function Summarize() {
       {/* Source Input */}
       <div className="flex items-center justify-center w-full mt-6">
         <div className="p-6 bg-white rounded-2xl shadow-2xl flex flex-col w-2/3 gap-4">
-          <div
-            className="breadcrumbs text-xl font-semibold text-sky-700"
-          >
+          <div className="breadcrumbs text-xl font-semibold text-sky-700">
             <ul className="flex items-center gap-2 px-2">
               <li>
                 <img
@@ -52,7 +50,7 @@ export default function Summarize() {
                 />
               </li>
               <li>Source Input</li>
-              <li>{source.toLocaleUpperCase()}</li>
+              <li className="text-sky-800">{source.toLocaleUpperCase()}</li>
             </ul>
           </div>
 

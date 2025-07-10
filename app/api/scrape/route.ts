@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { chromium } from 'playwright-core';
+import { NextResponse } from "next/server";
+import { chromium } from "playwright-core";
 
 export async function POST(req: Request) {
   try {

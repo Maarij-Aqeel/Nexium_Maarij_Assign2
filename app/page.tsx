@@ -7,19 +7,17 @@ export default function Home() {
   const [urlInput, setUrlInput] = useState("");
   const [textInput, setTextInput] = useState("");
   const [summarized_click, setSummarized] = useState("");
-  const [scraped_text, setScrapedText] = useState("");
-  const [summarized_text, setSummarizedText] = useState("");
 
-  const router=useRouter()
+  const router = useRouter();
 
   const images = [
-    "/images/lightning.png",
-    "/images/flexible.png",
-    "/images/translation.png",
+    "https://img.icons8.com/?size=100&id=kxMTqpr5xEny&format=png&color=000000",
+    "https://img.icons8.com/?size=100&id=unXm4ixWAr6H&format=png&color=000000",
+    "https://img.icons8.com/?size=100&id=NbwFEv4Mt8cG&format=png&color=000000",
   ];
 
   // Scraping text call
-    const scrape_url = async (): Promise<string> => {
+  const scrape_url = async (): Promise<{ summary: string; title: string }> => {
     const resp = await fetch("/api/scrape", {
       method: "POST",
       headers: {
@@ -29,31 +27,41 @@ export default function Home() {
     });
 
     const data = await resp.json();
-    setScrapedText(data.text_content);
 
     const summary = await summarize_text(data.text_content);
-    return summary;
+    const title = data.title || "Untitled Blog";
+
+    return { summary, title };
   };
 
   // Summarizing text call
-    const summarize_text = async (text: string): Promise<string> => {
-      const resp = await fetch("/api/model_call", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ scraped_text: text }),
-      });
+  const summarize_text = async (text: string): Promise<string> => {
+    const resp = await fetch("/api/model_call", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ scraped_text: text }),
+    });
 
-      const data = await resp.json();
-      setSummarizedText(data.output);
-      return data.output;
-    };
+    const data = await resp.json();
+    return data.output;
+  };
 
-
+  // Function to check if a URL is Valid
+  function check_url(input_url: string) {
+    try {
+      new URL(input_url);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
   const isInputFilled =
-    (activeTab === "url" && urlInput.trim().length > 0) ||
-    (activeTab === "text" && textInput.trim().length > 0);
+    (activeTab === "url" &&
+      urlInput.trim().length > 0 &&
+      check_url(urlInput)) ||
+    (activeTab === "text" && textInput.trim().length > 50);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cyan-100 to-white flex flex-col items-center px-6 py-12">
@@ -109,7 +117,7 @@ export default function Home() {
         {/* Input Fields */}
         {activeTab === "url" && (
           <input
-            type="text"
+            type="url"
             placeholder="https://example.com/blog-post"
             className="w-full p-4 text-gray-800 bg-sky-50 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
             value={urlInput}
@@ -135,22 +143,31 @@ export default function Home() {
                 : "bg-gray-400 text-white opacity-60 cursor-not-allowed"
             }`}
             disabled={!isInputFilled}
-           onClick={async () => {
-          setSummarized("True");
+            onClick={async () => {
+              setSummarized("True");
 
-          let finalText = "";
+              let finalText = "";
+              let title = "";
 
-          if (activeTab === "url") {
-            const scraped = await scrape_url(); // return summarized_text from here
-            finalText = scraped;
-          } else {
-            finalText = await summarize_text(textInput);
-          }
-          localStorage.setItem("summarized", finalText);
-          router.push(`/summarize?s=${encodeURIComponent(urlInput)}&source=${activeTab}`);
+              if (activeTab === "url") {
+                const { summary, title: returnedTitle } = await scrape_url();
+                finalText = summary;
+                title = returnedTitle;
+              } else {
+                finalText = await summarize_text(textInput);
+                title = "Raw Text Summary";
+              }
+              // Store in localstorage for later use
+              localStorage.setItem("summarized", finalText);
+              localStorage.setItem("title", title);
 
-        }}
-
+              // Navigate to summarize page
+              router.push(
+                `/summarize?s=${encodeURIComponent(
+                  urlInput
+                )}&source=${activeTab}`
+              );
+            }}
           >
             {summarized_click && (
               <span className="loading loading-dots mr-2"></span>
@@ -171,8 +188,8 @@ export default function Home() {
               <figure>
                 <img
                   src={images[i]}
+                  className="h-16 w-16 mx-auto mb-4"
                   alt={title}
-                  className="w-16 h-16 mx-auto mb-4"
                 />
               </figure>
 

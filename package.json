@@ -4,17 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build && npx playwright install",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@sparticuz/chromium": "^138.0.0",
     "@vitalets/google-translate-api": "^9.2.1",
     "dotenv": "^17.0.1",
     "framer-motion": "^12.23.3",
     "next": "15.3.5",
-    "playwright": "^1.53.2",
+    "puppeteer-core": "^24.12.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0"

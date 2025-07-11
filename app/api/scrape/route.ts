@@ -1,24 +1,23 @@
 import { NextResponse } from "next/server";
-import { chromium } from "playwright-core";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium"; 
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const browser = await chromium.launch({
-      headless: true,
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(), 
+      headless: true
     });
 
     const page = await browser.newPage();
 
-    await page.goto(body.url, {
-      waitUntil: "domcontentloaded",
-    });
+    await page.goto(body.url, { waitUntil: "domcontentloaded" });
 
-    // Get the title of the page
     const title = await page.title();
 
-    // Get the Text content of the page
     const text_content = await page.evaluate(() => {
       return document.body.innerText;
     });
@@ -29,7 +28,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Scraping error:", error);
     return NextResponse.json(
-      { error: "Failed to Scrape", details: String(error) },
+      { error: "Failed to scrape", details: String(error) },
       { status: 500 }
     );
   }

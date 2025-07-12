@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
@@ -12,11 +12,34 @@ export default function SummaryClient() {
   const source = searchParams.get("source") || "";
 
   const [summary, setSummary] = useState("");
+  const [hasUploaded, setHasUploaded] = useState(false);
 
   useEffect(() => {
     const text = localStorage.getItem("summarized") || "";
     setSummary(text);
   }, []);
+
+  useEffect(() => {
+    if (summary && url && !hasUploaded) {
+      SendSummary(url, summary);
+      setHasUploaded(true);
+    }
+  }, [summary, url, hasUploaded]);
+
+  const SendSummary = async (url: string, summarize_text: string) => {
+    try {
+      const resp = await fetch("/api/items_sb", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url, summarizedText: summarize_text }),
+      });
+      if (!resp.ok) {
+        console.error("Failed to upload summary");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+    }
+  };
 
   return (
     <motion.div

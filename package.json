@@ -11,6 +11,8 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@sparticuz/chromium": "^138.0.0",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.50.5",
     "@vitalets/google-translate-api": "^9.2.1",
     "dotenv": "^17.0.1",
     "framer-motion": "^12.23.3",

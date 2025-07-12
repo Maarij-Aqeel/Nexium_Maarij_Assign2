@@ -19,6 +19,15 @@ export default function Home() {
     "https://img.icons8.com/?size=100&id=NbwFEv4Mt8cG&format=png&color=000000",
   ];
 
+  // Uploading to Database
+  const send_db = async (url: string, title: string, scraped_text: string) => {
+    const resp = await fetch("/api/items", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url, title, fullText: scraped_text }),
+    });
+  };
+
   // Scraping text call
   const scrape_url = async (): Promise<{ summary: string; title: string }> => {
     const resp = await fetch("/api/scrape", {
@@ -30,9 +39,12 @@ export default function Home() {
     });
 
     const data = await resp.json();
+    const title = data.title || "Untitled Blog";
+
+    // Upload to DB
+    send_db(urlInput, title, data.text_content);
 
     const summary = await summarize_text(data.text_content);
-    const title = data.title || "Untitled Blog";
 
     return { summary, title };
   };
@@ -89,9 +101,10 @@ export default function Home() {
         <h2 className="text-2xl text-sky-800 font-semibold text-center mb-2">
           Choose Your Input Method
         </h2>
-        <GradualSpacing className="text-gray-600 text-center mb-6"
+        <GradualSpacing
+          className="text-gray-600 text-center mb-6"
           text="Summarize content by pasting a URL or entering raw text directly"
-          />
+        />
 
         {/* Tabs */}
         <div className="flex justify-center mb-6 gap-4">
@@ -109,7 +122,7 @@ export default function Home() {
             Blog URL
           </button>
           <button
-            className={`px-4 py-2 text-lg rounded-full transition-all duration-200 ${
+            className={`px-4 py-2 text-lg  rounded-full transition-all duration-200 ${
               activeTab === "text"
                 ? "bg-sky-600 text-white shadow-md"
                 : "bg-sky-100 text-sky-700 hover:bg-sky-200"
@@ -188,7 +201,10 @@ export default function Home() {
       </div>
 
       {/* Feature Cards */}
-      <TextFade direction="up" className="flex flex-wrap justify-center gap-6 mt-12 px-4 w-full max-w-6xl">
+      <TextFade
+        direction="up"
+        className="flex flex-wrap justify-center gap-6 mt-12 px-4 w-full max-w-6xl"
+      >
         {["Lightning Fast", "AI Powered", "Multilingual Support"].map(
           (title, i) => (
             <div
@@ -204,13 +220,13 @@ export default function Home() {
               </figure>
 
               <h2 className="text-2xl font-bold text-sky-800 mb-2">{title}</h2>
-              <p className="text-md text-gray-600">
+              <GradualSpacing className="text-md text-gray-600" text=
                 {i === 0
                   ? "Get summaries in seconds with our advanced processing."
                   : i === 1
                   ? "Powered by cutting-edge AI models for accurate results."
                   : "Translate summaries into Urdu and other languages instantly."}
-              </p>
+              />
             </div>
           )
         )}

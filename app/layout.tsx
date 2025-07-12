@@ -44,7 +44,7 @@ export default function RootLayout({
         <main className="flex-grow min-h-[80vh]">{children}</main>
 
         {/* Footer */}
-        <footer className="mt-12 bg-gradient-to-r from-sky-100 to-cyan-100 text-center text-gray-800 py-6 shadow-inner">
+        <footer className="bg-gradient-to-r from-sky-100 to-cyan-100 text-center text-gray-800 py-6 shadow-inner">
           <div className="text-sm">
             © {new Date().getFullYear()} Blog Summarizer. All rights reserved.
           </div>

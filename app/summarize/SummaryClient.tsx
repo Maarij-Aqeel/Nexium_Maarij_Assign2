@@ -48,7 +48,7 @@ export default function SummaryClient() {
           Back
         </button>
         <button
-          className="text-white bg-sky-600 hover:bg-sky-700 font-semibold rounded-full w-48 text-lg p-3 transition-all duration-200 shadow-md"
+          className="text-white bg-sky-600 hover:bg-sky-700 font-semibold rounded-full w-48 text-lg p-3 cursor-pointer transition-all duration-200 shadow-md"
           onClick={() => {
             localStorage.clear();
             router.push("/");

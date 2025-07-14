@@ -10,6 +10,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("url");
   const [urlInput, setUrlInput] = useState("");
   const [textInput, setTextInput] = useState("");
+  const [Error, SetError] = useState(false);
   const [summarized_click, setSummarized] = useState(false);
 
   const router = useRouter();
@@ -181,12 +182,11 @@ export default function Home() {
                   className="relative"
                 >
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <span className="text-gray-400 text-lg">🌐</span>
                   </div>
                   <input
                     type="url"
                     placeholder="https://example.com/blog-post"
-                    className="w-full pl-12 pr-4 py-4 text-gray-800 bg-gradient-to-r from-sky-50 to-cyan-50 border-2 border-sky-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent transition-all duration-300 text-lg placeholder-gray-400"
+                    className="w-full pl-8 pr-4 py-4 text-gray-800 bg-gradient-to-r from-sky-50 to-cyan-50 border-2 border-sky-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent transition-all duration-300 text-lg placeholder-gray-400"
                     value={urlInput}
                     onChange={(e) => setUrlInput(e.target.value)}
                   />
@@ -265,12 +265,19 @@ export default function Home() {
                   localStorage.setItem("summarized", finalText);
                   localStorage.setItem("title", title);
 
-                  // Navigate to summarize page
-                  router.push(
-                    `/summarize?s=${encodeURIComponent(
-                      urlInput
-                    )}&source=${activeTab}`
-                  );
+                  if (!finalText || finalText.trim() === "") {
+                    SetError(true);
+                    setSummarized(false);
+                    return;
+                  } else {
+                    SetError(false)
+                    // Navigate to summarize page
+                    router.push(
+                      `/summarize?s=${encodeURIComponent(
+                        urlInput
+                      )}&source=${activeTab}`
+                    );
+                  }
                 }}
               >
                 {summarized_click && (
@@ -282,21 +289,19 @@ export default function Home() {
 
             {/* Input validation feedback */}
             <AnimatePresence>
-              {!isInputFilled &&
-                (activeTab === "url" ? urlInput : textInput) && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="text-center mt-4"
-                  >
-                    <p className="text-amber-600 text-sm bg-amber-50 px-4 py-2 rounded-full inline-block">
-                      {activeTab === "url"
-                        ? "Please enter a valid URL"
-                        : "Please enter at least 50 characters"}
-                    </p>
-                  </motion.div>
-                )}
+              {Error && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="text-center mt-4"
+                >
+                  <p className="text-red-600 text-sm bg-red-100 px-4 py-2 rounded-full inline-block">
+                    Error: LLM not available or failed to summarize. Try again
+                    later.
+                  </p>
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
         </motion.div>

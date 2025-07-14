@@ -32,7 +32,7 @@ export default function RootLayout({
         <header className="sticky top-0 z-50 bg-gradient-to-r from-sky-100 to-cyan-100 shadow-md backdrop-blur-lg">
           <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <h1 className="text-2xl font-bold text-sky-800 hover:opacity-90 transition cursor-pointer">
-              Blog Summarizer
+              BlogDigester
             </h1>
             <nav className="flex items-center space-x-6 text-sm font-medium text-sky-800">
               <Navigation />
@@ -46,7 +46,7 @@ export default function RootLayout({
         {/* Footer */}
         <footer className="bg-gradient-to-r from-sky-100 to-cyan-100 text-center text-gray-800 py-6 shadow-inner">
           <div className="text-sm">
-            © {new Date().getFullYear()} Blog Summarizer. All rights reserved.
+            © {new Date().getFullYear()} BlogDigester. All rights reserved.
           </div>
         </footer>
       </body>

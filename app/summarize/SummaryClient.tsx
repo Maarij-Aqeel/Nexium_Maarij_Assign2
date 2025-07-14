@@ -1,9 +1,8 @@
 "use client";
-
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import SummarizeBox from "@/components/SummarizeBox";
-import Link from "next/link";
 import { sendToSupabase } from "@/lib/api/summarizer";
 import { motion } from "framer-motion";
 
@@ -11,6 +10,7 @@ export default function SummaryClient() {
   const searchParams = useSearchParams();
   const url = searchParams.get("s") || "";
   const source = searchParams.get("source") || "";
+  const router = useRouter();
 
   const [summary, setSummary] = useState("");
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -36,8 +36,8 @@ export default function SummaryClient() {
     >
       {/* Top Buttons */}
       <div className="w-full flex flex-row px-10 py-6 justify-between items-center">
-        <Link
-          href="/"
+        <button
+          onClick={() => router.back()}
           className="text-sky-700 text-center border border-sky-700 flex items-center  rounded-full hover:bg-sky-100 w-40 text-lg font-bold p-3 justify-center transition-all duration-200 shadow-md gap-2"
         >
           <img
@@ -46,8 +46,14 @@ export default function SummaryClient() {
             alt="Back icon"
           />
           Back
-        </Link>
-        <button className="text-white bg-sky-600 hover:bg-sky-700 font-semibold rounded-full w-48 text-lg p-3 transition-all duration-200 shadow-md">
+        </button>
+        <button
+          className="text-white bg-sky-600 hover:bg-sky-700 font-semibold rounded-full w-48 text-lg p-3 transition-all duration-200 shadow-md"
+          onClick={() => {
+            localStorage.clear();
+            router.push("/");
+          }}
+        >
           + New Summary
         </button>
       </div>

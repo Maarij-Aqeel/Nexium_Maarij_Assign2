@@ -20,7 +20,7 @@ export async function POST(req:Request)
 
         // Prompt for model
         const body = await req.json();
-        const model = genai.getGenerativeModel({ model: "gemini-2.0-flash-exp",systemInstruction:systemPrompt });
+        const model = genai.getGenerativeModel({ model: "gemini-1.5-flash",systemInstruction:systemPrompt });
     
         // Getting the Result
         const result = await model.generateContent(body.scraped_text || "Who are you");

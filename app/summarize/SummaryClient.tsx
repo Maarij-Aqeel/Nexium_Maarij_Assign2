@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import SummarizeBox from "@/components/SummarizeBox";
 import Link from "next/link";
+import { sendToSupabase } from "@/lib/api/summarizer";
 import { motion } from "framer-motion";
 
 export default function SummaryClient() {
@@ -21,25 +22,10 @@ export default function SummaryClient() {
 
   useEffect(() => {
     if (summary && url && !hasUploaded) {
-      SendSummary(url, summary);
+      sendToSupabase(url, summary);
       setHasUploaded(true);
     }
   }, [summary, url, hasUploaded]);
-
-  const SendSummary = async (url: string, summarize_text: string) => {
-    try {
-      const resp = await fetch("/api/items_sb", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, summarizedText: summarize_text }),
-      });
-      if (!resp.ok) {
-        console.error("Failed to upload summary");
-      }
-    } catch (err) {
-      console.error("Upload error:", err);
-    }
-  };
 
   return (
     <motion.div

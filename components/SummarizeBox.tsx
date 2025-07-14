@@ -2,6 +2,8 @@ import ReactMarkdown from "react-markdown";
 import { useState, useEffect } from "react";
 import { GradualSpacing } from "./GradualSpacing";
 import { Message } from "../components/Message";
+import { translateText } from "@/lib/api/summarizer";
+import languageCodes from "@/lib/languages";
 
 type Props = {
   summarize_text: string;
@@ -13,13 +15,7 @@ export default function SummarizeBox({ summarize_text }: Props) {
   const [translatedText, SetTranslatedText] = useState("");
   const [showTranslated, SetshowTranslated] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
-
-  // Translate summarized text
-  const translate_text = async (text: string): Promise<string> => {
-    const res = await fetch(`/api/translate?q=${encodeURIComponent(text)}`);
-    const data = await res.json();
-    return data.translated;
-  };
+  const [selectedLang, SetSelectedLang] = useState("ur");
 
   useEffect(() => {
     setTitle(localStorage.getItem("title") || "");
@@ -41,7 +37,7 @@ export default function SummarizeBox({ summarize_text }: Props) {
 
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl text-sky-800 font-bold">Summary</h1>
+          <GradualSpacing className="text-2xl text-sky-800 font-bold" text="Summary"/>
 
           <button
             className="text-lg px-4 py-2 cursor-pointer font-semibold flex items-center gap-2 bg-sky-100 text-sky-700 hover:bg-sky-200 rounded-full shadow-sm transition-all duration-200"
@@ -63,7 +59,10 @@ export default function SummarizeBox({ summarize_text }: Props) {
 
         {/* Title  */}
         <div className="text-lg text-gray-600 flex">
-          <GradualSpacing className="font-semibold text-sky-800" text={`Title: ${title}`}/>
+          <GradualSpacing
+            className="font-semibold text-sky-800"
+            text={`Title: ${title}`}
+          />
         </div>
 
         {/* Main Summary Content */}
@@ -78,7 +77,7 @@ export default function SummarizeBox({ summarize_text }: Props) {
         </div>
 
         {/* Translate Button */}
-        <div>
+        <div className="flex flex-row items-center gap-6">
           <button
             className={`bg-sky-600 text-white font-semibold px-5 py-3 rounded-full transition-all duration-200 shadow-md flex items-center gap-3 ${
               isTranslating
@@ -104,7 +103,10 @@ export default function SummarizeBox({ summarize_text }: Props) {
               // 4. Translate if not done yet
               setIsTranslating(true);
               try {
-                const translated = await translate_text(summarize_text);
+                const translated = await translateText(
+                  summarize_text,
+                  selectedLang
+                );
                 SetTranslatedText(translated);
                 SetshowTranslated(true);
               } catch (err) {
@@ -127,8 +129,26 @@ export default function SummarizeBox({ summarize_text }: Props) {
               ? "Translating"
               : showTranslated
               ? "Show Original"
-              : "Translate to Urdu"}
+              : "Translate"}
           </button>
+
+          <select
+            value={selectedLang}
+            onChange={(e) => {
+              SetSelectedLang(e.target.value);
+              SetTranslatedText("");
+            }}
+            className="select bg-white text-sky-700 font-semibold border border-sky-300 rounded-xl shadow-md hover:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-400 transition-all duration-200 w-52"
+          >
+            <option value="" disabled>
+              Pick a Language
+            </option>
+            {Object.entries(languageCodes).map(([code, name]) => (
+              <option key={code} value={code}>
+                {name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </div>

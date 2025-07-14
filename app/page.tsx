@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { GradualSpacing } from "@/components/GradualSpacing";
-import { TextFade } from "@/components/FadeUp";
+import FeatureCards from "@/components/FeatureCards";
 import { motion } from "framer-motion";
+import { scrapeAndSummarize, summarizeText } from "@/lib/api/summarizer";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("url");
@@ -12,56 +13,6 @@ export default function Home() {
   const [summarized_click, setSummarized] = useState(false);
 
   const router = useRouter();
-
-  const images = [
-    "https://img.icons8.com/?size=100&id=kxMTqpr5xEny&format=png&color=000000",
-    "https://img.icons8.com/?size=100&id=unXm4ixWAr6H&format=png&color=000000",
-    "https://img.icons8.com/?size=100&id=NbwFEv4Mt8cG&format=png&color=000000",
-  ];
-
-  // Uploading to Database
-  const send_db = async (url: string, title: string, scraped_text: string) => {
-    const resp = await fetch("/api/items", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url, title, fullText: scraped_text }),
-    });
-  };
-
-  // Scraping text call
-  const scrape_url = async (): Promise<{ summary: string; title: string }> => {
-    const resp = await fetch("/api/scrape", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ url: urlInput }),
-    });
-
-    const data = await resp.json();
-    const title = data.title || "Untitled Blog";
-
-    // Upload to DB
-    send_db(urlInput, title, data.text_content);
-
-    const summary = await summarize_text(data.text_content);
-
-    return { summary, title };
-  };
-
-  // Summarizing text call
-  const summarize_text = async (text: string): Promise<string> => {
-    const resp = await fetch("/api/model_call", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ scraped_text: text }),
-    });
-
-    const data = await resp.json();
-    return data.output;
-  };
 
   // Function to check if a URL is Valid
   function check_url(input_url: string) {
@@ -173,11 +124,12 @@ export default function Home() {
               let title = "";
 
               if (activeTab === "url") {
-                const { summary, title: returnedTitle } = await scrape_url();
+                const { summary, title: returnedTitle } =
+                  await scrapeAndSummarize(urlInput);
                 finalText = summary;
                 title = returnedTitle;
               } else {
-                finalText = await summarize_text(textInput);
+                finalText = await summarizeText(textInput);
                 title = "Raw Text Summary";
               }
               // Store in localstorage for later use
@@ -201,36 +153,7 @@ export default function Home() {
       </div>
 
       {/* Feature Cards */}
-      <TextFade
-        direction="up"
-        className="flex flex-wrap justify-center gap-6 mt-12 px-4 w-full max-w-6xl"
-      >
-        {["Lightning Fast", "AI Powered", "Multilingual Support"].map(
-          (title, i) => (
-            <div
-              key={i}
-              className="bg-white text-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 w-80 p-6 text-center"
-            >
-              <figure>
-                <img
-                  src={images[i]}
-                  className="h-16 w-16 mx-auto mb-4"
-                  alt={title}
-                />
-              </figure>
-
-              <h2 className="text-2xl font-bold text-sky-800 mb-2">{title}</h2>
-              <GradualSpacing className="text-md text-gray-600" text=
-                {i === 0
-                  ? "Get summaries in seconds with our advanced processing."
-                  : i === 1
-                  ? "Powered by cutting-edge AI models for accurate results."
-                  : "Translate summaries into Urdu and other languages instantly."}
-              />
-            </div>
-          )
-        )}
-      </TextFade>
+      <FeatureCards />
     </motion.div>
   );
 }
